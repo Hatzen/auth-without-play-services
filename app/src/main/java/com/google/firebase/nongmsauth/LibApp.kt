@@ -30,7 +30,7 @@ import androidx.multidex.MultiDexApplication
 /**
  * Base class for those who need to maintain global application state.
  */
-class LibApp : MultiDexApplication() {
+abstract class LibApp : MultiDexApplication() {
     /**
      * Constructor.
      */
