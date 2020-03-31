@@ -22,6 +22,12 @@ import com.google.firebase.components.Component
 import com.google.firebase.components.ComponentRegistrar
 import com.google.firebase.components.Dependency
 import com.google.firebase.nongmsauth.FirebaseRestAuth
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import android.app.Activity
+import android.content.Context
+import com.google.firebase.nongmsauth.LibApp
+
 
 /**
  * Required so other Firebase libraries can find this implementation of InternalAuthProvider.
@@ -31,6 +37,10 @@ import com.google.firebase.nongmsauth.FirebaseRestAuth
 class RestAuthRegistrar : ComponentRegistrar {
 
     override fun getComponents(): MutableList<Component<*>> {
+        if (isGooglePlayServicesAvailable( LibApp.context )) {
+            return mutableListOf()
+        }
+
         val restAuthComponent =
             Component.builder(InternalAuthProvider::class.java)
                 .add(Dependency.required(FirebaseApp::class.java))
@@ -43,4 +53,12 @@ class RestAuthRegistrar : ComponentRegistrar {
         return mutableListOf(restAuthComponent)
     }
 
+    fun isGooglePlayServicesAvailable(context: Context): Boolean {
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val status = googleApiAvailability.isGooglePlayServicesAvailable(context)
+        if (status != ConnectionResult.SUCCESS) {
+            return false
+        }
+        return true
+    }
 }
